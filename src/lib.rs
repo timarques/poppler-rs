@@ -94,6 +94,19 @@ impl CairoSetSize for cairo::PDFSurface {
     }
 }
 
+impl CairoSetSize for cairo::ImageSurface {
+    // FIXME: does this need mut?
+    fn set_size(&mut self, width_in_points: f64, height_in_points: f64) {
+        unsafe {
+            ffi::cairo_pdf_surface_set_size(
+                self.to_raw_none(),
+                width_in_points as c_double,
+                height_in_points as c_double,
+            )
+        }
+    }
+}
+
 
 #[derive(Debug)]
 pub struct PoppperPageRef {
