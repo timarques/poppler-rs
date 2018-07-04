@@ -108,11 +108,6 @@ mod tests {
     use cairo::prelude::SurfaceExt;
 
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-
-    #[test]
     fn test1() {
         let filename = "test.pdf";
         let doc = PopplerDocument::new_from_file(filename, "").unwrap();
