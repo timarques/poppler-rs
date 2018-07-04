@@ -1,4 +1,12 @@
+use std::ffi::CString;
+use std::path;
+use std::os::raw::c_double;
+use std::os::raw::c_void;
+use std::os::raw::c_int;
+
 extern crate cairo;
+
+
 extern crate cairo_sys;
 extern crate glib;
 extern crate glib_sys;
@@ -6,17 +14,11 @@ extern crate glib_sys;
 mod ffi;
 mod util;
 
-use cairo::prelude::SurfaceExt;
-
-use std::ffi::CString;
-use std::os::raw::{c_double, c_int, c_void};
-use std::path;
+#[derive(Debug)]
+pub struct PopplerDocument(*mut ffi::PopplerDocument);
 
 #[derive(Debug)]
-struct PopplerDocument(*mut ffi::PopplerDocument);
-
-#[derive(Debug)]
-struct PopplerPage(*mut ffi::PopplerPage);
+pub struct PopplerPage(*mut ffi::PopplerPage);
 
 impl PopplerDocument {
     pub fn new_from_file<P: AsRef<path::Path>>(
@@ -74,12 +76,6 @@ impl PopplerPage {
     }
 }
 
-
-#[derive(Debug)]
-pub struct PoppperPageRef {
-    ptr: *mut c_void,
-}
-
 // FIXME: needs to be in upstream version of cairo-rs
 pub trait CairoSetSize {
     fn set_size(&mut self, width_in_points: f64, height_in_points: f64);
@@ -99,41 +95,48 @@ impl CairoSetSize for cairo::PDFSurface {
 }
 
 
-fn run() -> Result<(), glib::error::Error> {
-    let filename = "test.pdf";
-    let doc = PopplerDocument::new_from_file(filename, "")?;
-    let num_pages = doc.get_n_pages();
-
-    println!("Document has {} page(s)", num_pages);
-
-    let mut surface = cairo::PDFSurface::create("output.pdf", 420.0, 595.0);
-    let mut ctx = cairo::Context::new(&mut surface);
-
-    // FIXME: move iterator to poppler
-    for page_num in 0..num_pages {
-        let page = doc.get_page(page_num).unwrap();
-        let (w, h) = page.get_size();
-        println!("page {} has size {}, {}", page_num, w, h);
-        // surface.set_size(w as i32, h as i32);  // ??
-
-        ctx.save();
-        page.render_for_printing(&mut ctx);
-        ctx.restore();
-        ctx.show_page();
-    }
-    //         g_object_unref (page);
-
-    surface.finish();
-
-    Ok(())
+#[derive(Debug)]
+pub struct PoppperPageRef {
+    ptr: *mut c_void,
 }
 
+#[cfg(test)]
+mod tests {
+    use PopplerDocument;
+    use cairo::Context;
+    use cairo::PDFSurface;
+    use cairo::prelude::SurfaceExt;
 
-fn main() {
-    match run() {
-        Ok(()) => (),
-        Err(e) => {
-            println!("ERROR: {}", e);
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+
+    #[test]
+    fn test1() {
+        let filename = "test.pdf";
+        let doc = PopplerDocument::new_from_file(filename, "").unwrap();
+        let num_pages = doc.get_n_pages();
+
+        println!("Document has {} page(s)", num_pages);
+
+        let mut surface = PDFSurface::create("output.pdf", 420.0, 595.0);
+        let mut ctx = Context::new(&mut surface);
+
+        // FIXME: move iterator to poppler
+        for page_num in 0..num_pages {
+            let page = doc.get_page(page_num).unwrap();
+            let (w, h) = page.get_size();
+            println!("page {} has size {}, {}", page_num, w, h);
+            // surface.set_size(w as i32, h as i32);  // ??
+
+            ctx.save();
+            page.render_for_printing(&mut ctx);
+            ctx.restore();
+            ctx.show_page();
         }
-    };
+        //         g_object_unref (page);
+
+        surface.finish();
+    }
 }
