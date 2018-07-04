@@ -106,6 +106,7 @@ mod tests {
     use cairo::Context;
     use cairo::PDFSurface;
     use cairo::prelude::SurfaceExt;
+    use CairoSetSize;
 
     #[test]
     fn test1() {
@@ -123,14 +124,14 @@ mod tests {
             let page = doc.get_page(page_num).unwrap();
             let (w, h) = page.get_size();
             println!("page {} has size {}, {}", page_num, w, h);
-            // surface.set_size(w as i32, h as i32);  // ??
+            surface.set_size(w, h);
 
             ctx.save();
             page.render_for_printing(&mut ctx);
             ctx.restore();
             ctx.show_page();
         }
-        //         g_object_unref (page);
+        // g_object_unref (page);
 
         surface.finish();
     }
