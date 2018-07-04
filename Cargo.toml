@@ -5,7 +5,7 @@ name = "poppler"
 license = "GPL-2.0"
 version = "0.2.0"
 description = "Wrapper for the GPL-licensed Poppler PDF rendering library."
-repository = "https://github.com/mbr/poppler-rs"
+repository = "https://github.com/DMSrs/poppler-rs"
 
 [dependencies]
 cairo-rs = "0.3.0"
