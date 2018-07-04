@@ -2,7 +2,7 @@
 authors = ["Marc Brinkmann <git@marcbrinkmann.de>",
           "Denys Vitali <denys@denv.it>"]
 name = "poppler"
-license = "GPL-2.0-or-later"
+license = "GPL-2.0"
 version = "0.2.0"
 description = "Wrapper for the GPL-licensed Poppler PDF rendering library."
 repository = "https://github.com/mbr/poppler-rs"
