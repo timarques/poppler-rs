@@ -1,8 +1,9 @@
 [package]
-authors = ["Marc Brinkmann <git@marcbrinkmann.de>"]
+authors = ["Marc Brinkmann <git@marcbrinkmann.de>",
+          "Denys Vitali <denys@denv.it>"]
 name = "poppler"
-license = "GPLv2"
-version = "0.1.0"
+license = "GPL-2.0-or-later"
+version = "0.2.0"
 description = "Wrapper for the GPL-licensed Poppler PDF rendering library."
 repository = "https://github.com/mbr/poppler-rs"
 
