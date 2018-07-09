@@ -37,4 +37,8 @@ extern "C" {
         width_in_points: c_double,
         height_in_points: c_double,
     );
+
+    pub fn poppler_page_get_text(
+        page: *mut PopplerPage
+    ) -> *mut c_char;
 }

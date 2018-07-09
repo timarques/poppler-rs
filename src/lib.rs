@@ -3,6 +3,7 @@ use std::path;
 use std::os::raw::c_double;
 use std::os::raw::c_void;
 use std::os::raw::c_int;
+use std::ffi::CStr;
 
 extern crate cairo;
 
@@ -74,6 +75,15 @@ impl PopplerPage {
     pub fn render_for_printing(&self, ctx: &mut cairo::Context) {
         unsafe { ffi::poppler_page_render_for_printing(self.0, ctx.to_raw_none()) }
     }
+
+    pub fn get_text(&self) -> Option<&str> {
+        match unsafe { ffi::poppler_page_get_text(self.0) } {
+            ptr if ptr.is_null() => None,
+            ptr => unsafe {
+                Some(CStr::from_ptr(ptr).to_str().unwrap())
+            },
+        }
+    }
 }
 
 // FIXME: needs to be in upstream version of cairo-rs
@@ -128,6 +138,9 @@ mod tests {
 
             ctx.save();
             page.render_for_printing(&mut ctx);
+
+            println!("Text: {:?}", page.get_text().unwrap_or(""));
+
             ctx.restore();
             ctx.show_page();
         }
