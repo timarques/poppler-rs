@@ -72,6 +72,10 @@ impl PopplerPage {
         (width, height)
     }
 
+    pub fn render(&self, ctx: &mut cairo::Context) {
+        unsafe { ffi::poppler_page_render(self.0, ctx.to_raw_none()) }
+    }
+
     pub fn render_for_printing(&self, ctx: &mut cairo::Context) {
         unsafe { ffi::poppler_page_render_for_printing(self.0, ctx.to_raw_none()) }
     }
@@ -117,6 +121,11 @@ mod tests {
     use cairo::PDFSurface;
     use cairo::prelude::SurfaceExt;
     use CairoSetSize;
+    use PopplerPage;
+    use cairo::ImageSurface;
+    use cairo::enums::Format::ARgb32;
+    use std::fs::File;
+    use cairo::enums::Format::Rgb24;
 
     #[test]
     fn test1() {
@@ -137,7 +146,7 @@ mod tests {
             surface.set_size(w, h);
 
             ctx.save();
-            page.render_for_printing(&mut ctx);
+            page.render(&mut ctx);
 
             println!("Text: {:?}", page.get_text().unwrap_or(""));
 
@@ -145,7 +154,29 @@ mod tests {
             ctx.show_page();
         }
         // g_object_unref (page);
-
+        //surface.write_to_png("file.png");
         surface.finish();
+    }
+
+    #[test]
+    fn test2(){
+        let path = "test.pdf";
+        let doc : PopplerDocument = PopplerDocument::new_from_file(path, "").unwrap();
+        let num_pages = doc.get_n_pages();
+        let page : PopplerPage = doc.get_page(0).unwrap();
+        let (w, h) = page.get_size();
+
+        let mut surface = ImageSurface::create(ARgb32,  (w as i32), (h as i32)).unwrap();
+        let mut ctx = Context::new(&mut surface);
+
+
+        ctx.save();
+        page.render(&mut ctx);
+        ctx.restore();
+        ctx.show_page();
+
+        let mut f : File = File::create("out.png").unwrap();
+        surface.write_to_png(&mut f).expect("Unable to write PNG");
+        surface.
     }
 }
