@@ -125,7 +125,6 @@ mod tests {
     use cairo::ImageSurface;
     use cairo::enums::Format::ARgb32;
     use std::fs::File;
-    use cairo::enums::Format::Rgb24;
 
     #[test]
     fn test1() {
@@ -166,7 +165,9 @@ mod tests {
         let page : PopplerPage = doc.get_page(0).unwrap();
         let (w, h) = page.get_size();
 
-        let mut surface = ImageSurface::create(ARgb32,  (w as i32), (h as i32)).unwrap();
+        println!("Document has {} page(s) and is {}x{}", num_pages, w, h);
+
+        let mut surface = ImageSurface::create(ARgb32,  w as i32, h as i32).unwrap();
         let mut ctx = Context::new(&mut surface);
 
 
