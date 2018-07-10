@@ -177,6 +177,5 @@ mod tests {
 
         let mut f : File = File::create("out.png").unwrap();
         surface.write_to_png(&mut f).expect("Unable to write PNG");
-        surface.
     }
 }
