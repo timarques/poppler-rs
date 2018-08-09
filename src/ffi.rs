@@ -1,4 +1,4 @@
-use std::os::raw::{c_char, c_double, c_int};
+use std::os::raw::{c_char, c_double, c_int, c_uint};
 use cairo_sys;
 use glib_sys;
 
@@ -23,6 +23,10 @@ extern "C" {
         document: *mut PopplerDocument,
         index: c_int,
     ) -> *mut PopplerPage;
+
+    pub fn poppler_document_get_metadata(document: *mut PopplerDocument) -> *mut c_char;
+    pub fn poppler_document_get_pdf_version_string (document: *mut PopplerDocument) -> *mut c_char;
+    pub fn poppler_document_get_permissions(document: *mut PopplerDocument) -> c_uint;
 
     pub fn poppler_page_get_size(
         page: *mut PopplerPage,
