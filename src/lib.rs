@@ -40,6 +40,16 @@ impl PopplerDocument {
 
         Ok(PopplerDocument(doc))
     }
+    pub fn get_title(&self) -> Option<String> {
+        unsafe {
+            let ptr: *mut c_char = ffi::poppler_document_get_title(self.0);
+            if ptr.is_null() {
+                None
+            } else {
+                CString::from_raw(ptr).into_string().ok()
+            }
+        }
+    }
     pub fn get_metadata(&self) -> Option<String> {
         unsafe {
             let ptr: *mut c_char = ffi::poppler_document_get_metadata(self.0);
@@ -187,13 +197,14 @@ mod tests {
         let path = "test.pdf";
         let doc : PopplerDocument = PopplerDocument::new_from_file(path, "upw").unwrap();
         let num_pages = doc.get_n_pages();
+        let title = doc.get_title().unwrap();
         let metadata = doc.get_metadata();
         let version_string = doc.get_pdf_version_string();
         let permissions = doc.get_permissions();
         let page : PopplerPage = doc.get_page(0).unwrap();
         let (w, h) = page.get_size();
 
-        println!("Document has {} page(s) and is {}x{}", num_pages, w, h);
+        println!("Document {} has {} page(s) and is {}x{}", title, num_pages, w, h);
         println!("Version: {:?}, Permissions: {:x?}", version_string, permissions);
 
         assert!(metadata.is_some());

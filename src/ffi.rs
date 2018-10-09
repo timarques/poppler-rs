@@ -24,6 +24,7 @@ extern "C" {
         index: c_int,
     ) -> *mut PopplerPage;
 
+    pub fn poppler_document_get_title(document: *mut PopplerDocument) -> *mut c_char;
     pub fn poppler_document_get_metadata(document: *mut PopplerDocument) -> *mut c_char;
     pub fn poppler_document_get_pdf_version_string (document: *mut PopplerDocument) -> *mut c_char;
     pub fn poppler_document_get_permissions(document: *mut PopplerDocument) -> c_uint;
