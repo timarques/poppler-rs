@@ -40,6 +40,28 @@ impl PopplerDocument {
 
         Ok(PopplerDocument(doc))
     }
+    pub fn new_from_data(
+        data: &[u8],
+        password: &str,
+    ) -> Result<PopplerDocument, glib::error::Error> {
+        let pw = CString::new(password).map_err(|_| {
+            glib::error::Error::new(
+                glib::FileError::Inval,
+                "Password invalid (possibly contains NUL characters)",
+            )
+        })?;
+
+        let doc = util::call_with_gerror(|err_ptr| unsafe {
+            ffi::poppler_document_new_from_data(
+                data.as_ptr() as *const c_char,
+                data.len() as c_int,
+                pw.as_ptr(),
+                err_ptr
+            )
+        })?;
+
+        Ok(PopplerDocument(doc))
+    }
     pub fn get_title(&self) -> Option<String> {
         unsafe {
             let ptr: *mut c_char = ffi::poppler_document_get_title(self.0);
