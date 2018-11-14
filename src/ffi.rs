@@ -18,6 +18,12 @@ extern "C" {
         password: *const c_char,
         error: *mut *mut glib_sys::GError,
     ) -> *mut PopplerDocument;
+    pub fn poppler_document_new_from_data(
+        data: *const c_char,
+        length: c_int,
+        password: *const c_char,
+        error: *mut *mut glib_sys::GError,
+    ) -> *mut PopplerDocument;
     pub fn poppler_document_get_n_pages(document: *mut PopplerDocument) -> c_int;
     pub fn poppler_document_get_page(
         document: *mut PopplerDocument,
