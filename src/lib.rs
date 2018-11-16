@@ -187,7 +187,10 @@ mod tests {
     use PopplerPage;
     use cairo::ImageSurface;
     use cairo::enums::Format::ARgb32;
-    use std::fs::File;
+    use std::{
+        io::Read,
+        fs::File
+    };
 
     #[test]
     fn test1() {
@@ -221,7 +224,7 @@ mod tests {
     }
 
     #[test]
-    fn test2(){
+    fn test2_from_file(){
         let path = "test.pdf";
         let doc : PopplerDocument = PopplerDocument::new_from_file(path, "upw").unwrap();
         let num_pages = doc.get_n_pages();
@@ -250,5 +253,34 @@ mod tests {
 
         let mut f : File = File::create("out.png").unwrap();
         surface.write_to_png(&mut f).expect("Unable to write PNG");
+    }
+    #[test]
+    fn test2_from_data(){
+        let path = "test.pdf";
+        let mut file = File::open(path).unwrap();
+        let mut data: Vec<u8> = Vec::new();
+        file.read_to_end(&mut data).unwrap();
+        let doc : PopplerDocument = PopplerDocument::new_from_data(&data[..], "upw").unwrap();
+        let num_pages = doc.get_n_pages();
+        let title = doc.get_title().unwrap();
+        let metadata = doc.get_metadata();
+        let version_string = doc.get_pdf_version_string();
+        let permissions = doc.get_permissions();
+        let page : PopplerPage = doc.get_page(0).unwrap();
+        let (w, h) = page.get_size();
+
+        println!("Document {} has {} page(s) and is {}x{}", title, num_pages, w, h);
+        println!("Version: {:?}, Permissions: {:x?}", version_string, permissions);
+
+        assert!(metadata.is_some());
+        assert_eq!(version_string, Some("PDF-1.3".to_string()));
+        assert_eq!(permissions, 0xff);
+    }
+
+    #[test]
+    fn test3() {
+        let data = vec![];
+
+        assert!(PopplerDocument::new_from_data(&data[..], "upw").is_err());
     }
 }
