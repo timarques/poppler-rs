@@ -1,7 +1,7 @@
 use glib;
 use glib_sys::GError;
-use std::{fs, path, ptr};
 use std::ffi::{CString, OsString};
+use std::{fs, path, ptr};
 
 pub fn call_with_gerror<T, F>(f: F) -> Result<*mut T, glib::error::Error>
 where
@@ -19,7 +19,6 @@ where
         Ok(return_value)
     }
 }
-
 
 pub fn path_to_glib_url<P: AsRef<path::Path>>(p: P) -> Result<CString, glib::error::Error> {
     // canonicalize path, try to wrap failures into a glib error

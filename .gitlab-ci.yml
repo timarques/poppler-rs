@@ -1,0 +1,28 @@
+image: rust:latest
+
+stages:
+  - build
+  - test
+
+before_script:
+  - apt update
+  - apt install --yes libpoppler-glib-dev libpoppler-dev libcairo2-dev libglib2.0-dev
+  - rustup default nightly
+
+build:
+  tags:
+    - rust
+  stage: build
+  script:
+    - cargo build --verbose --all
+  artifacts:
+    paths:
+    - target 
+
+test:
+  tags:
+    - rust
+  stage: test
+  script:
+    - cargo test --verbose --all
+
