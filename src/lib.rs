@@ -238,7 +238,9 @@ mod tests {
         assert_eq!(version_string, Some("PDF-1.3".to_string()));
         assert_eq!(permissions, 0xff);
 
-        let mut surface = ImageSurface::create(ARgb32, w as i32, h as i32).unwrap();
+        assert_eq!(title, "This is a test PDF file");
+
+        let mut surface = ImageSurface::create(ARgb32,  w as i32, h as i32).unwrap();
         let mut ctx = Context::new(&mut surface);
 
         ctx.save();
