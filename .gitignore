@@ -4,3 +4,4 @@
 Cargo.lock
 output.pdf
 out.png
+*.swp
