@@ -44,6 +44,12 @@ impl PopplerDocument {
         data: &[u8],
         password: &str,
     ) -> Result<PopplerDocument, glib::error::Error> {
+        if data.len() == 0 {
+            return Err(glib::error::Error::new(
+                glib::FileError::Inval,
+                "data is empty",
+            ));
+        }
         let pw = CString::new(password).map_err(|_| {
             glib::error::Error::new(
                 glib::FileError::Inval,
