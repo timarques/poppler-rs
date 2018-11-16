@@ -1,12 +1,11 @@
+use std::ffi::CStr;
 use std::ffi::CString;
-use std::path;
 use std::os::raw::c_double;
 use std::os::raw::c_void;
-use std::os::raw::{c_int, c_char};
-use std::ffi::CStr;
+use std::os::raw::{c_char, c_int};
+use std::path;
 
 extern crate cairo;
-
 
 extern crate cairo_sys;
 extern crate glib;
@@ -62,7 +61,7 @@ impl PopplerDocument {
                 data.as_ptr() as *const c_char,
                 data.len() as c_int,
                 pw.as_ptr(),
-                err_ptr
+                err_ptr,
             )
         })?;
 
@@ -99,9 +98,7 @@ impl PopplerDocument {
         }
     }
     pub fn get_permissions(&self) -> u8 {
-        unsafe {
-            ffi::poppler_document_get_permissions(self.0) as u8
-        }
+        unsafe { ffi::poppler_document_get_permissions(self.0) as u8 }
     }
 
     pub fn get_n_pages(&self) -> usize {
@@ -117,7 +114,6 @@ impl PopplerDocument {
         }
     }
 }
-
 
 impl PopplerPage {
     pub fn get_size(&self) -> (f64, f64) {
@@ -146,9 +142,7 @@ impl PopplerPage {
     pub fn get_text(&self) -> Option<&str> {
         match unsafe { ffi::poppler_page_get_text(self.0) } {
             ptr if ptr.is_null() => None,
-            ptr => unsafe {
-                Some(CStr::from_ptr(ptr).to_str().unwrap())
-            },
+            ptr => unsafe { Some(CStr::from_ptr(ptr).to_str().unwrap()) },
         }
     }
 }
@@ -171,7 +165,6 @@ impl CairoSetSize for cairo::PDFSurface {
     }
 }
 
-
 #[derive(Debug)]
 pub struct PoppperPageRef {
     ptr: *mut c_void,
@@ -179,18 +172,15 @@ pub struct PoppperPageRef {
 
 #[cfg(test)]
 mod tests {
-    use PopplerDocument;
-    use cairo::Context;
-    use cairo::PDFSurface;
-    use cairo::prelude::SurfaceExt;
-    use CairoSetSize;
-    use PopplerPage;
-    use cairo::ImageSurface;
     use cairo::enums::Format::ARgb32;
-    use std::{
-        io::Read,
-        fs::File
-    };
+    use cairo::prelude::SurfaceExt;
+    use cairo::Context;
+    use cairo::ImageSurface;
+    use cairo::PDFSurface;
+    use std::{fs::File, io::Read};
+    use CairoSetSize;
+    use PopplerDocument;
+    use PopplerPage;
 
     #[test]
     fn test1() {
@@ -224,53 +214,64 @@ mod tests {
     }
 
     #[test]
-    fn test2_from_file(){
+    fn test2_from_file() {
         let path = "test.pdf";
-        let doc : PopplerDocument = PopplerDocument::new_from_file(path, "upw").unwrap();
+        let doc: PopplerDocument = PopplerDocument::new_from_file(path, "upw").unwrap();
         let num_pages = doc.get_n_pages();
         let title = doc.get_title().unwrap();
         let metadata = doc.get_metadata();
         let version_string = doc.get_pdf_version_string();
         let permissions = doc.get_permissions();
-        let page : PopplerPage = doc.get_page(0).unwrap();
+        let page: PopplerPage = doc.get_page(0).unwrap();
         let (w, h) = page.get_size();
 
-        println!("Document {} has {} page(s) and is {}x{}", title, num_pages, w, h);
-        println!("Version: {:?}, Permissions: {:x?}", version_string, permissions);
+        println!(
+            "Document {} has {} page(s) and is {}x{}",
+            title, num_pages, w, h
+        );
+        println!(
+            "Version: {:?}, Permissions: {:x?}",
+            version_string, permissions
+        );
 
         assert!(metadata.is_some());
         assert_eq!(version_string, Some("PDF-1.3".to_string()));
         assert_eq!(permissions, 0xff);
 
-        let mut surface = ImageSurface::create(ARgb32,  w as i32, h as i32).unwrap();
+        let mut surface = ImageSurface::create(ARgb32, w as i32, h as i32).unwrap();
         let mut ctx = Context::new(&mut surface);
-
 
         ctx.save();
         page.render(&mut ctx);
         ctx.restore();
         ctx.show_page();
 
-        let mut f : File = File::create("out.png").unwrap();
+        let mut f: File = File::create("out.png").unwrap();
         surface.write_to_png(&mut f).expect("Unable to write PNG");
     }
     #[test]
-    fn test2_from_data(){
+    fn test2_from_data() {
         let path = "test.pdf";
         let mut file = File::open(path).unwrap();
         let mut data: Vec<u8> = Vec::new();
         file.read_to_end(&mut data).unwrap();
-        let doc : PopplerDocument = PopplerDocument::new_from_data(&data[..], "upw").unwrap();
+        let doc: PopplerDocument = PopplerDocument::new_from_data(&data[..], "upw").unwrap();
         let num_pages = doc.get_n_pages();
         let title = doc.get_title().unwrap();
         let metadata = doc.get_metadata();
         let version_string = doc.get_pdf_version_string();
         let permissions = doc.get_permissions();
-        let page : PopplerPage = doc.get_page(0).unwrap();
+        let page: PopplerPage = doc.get_page(0).unwrap();
         let (w, h) = page.get_size();
 
-        println!("Document {} has {} page(s) and is {}x{}", title, num_pages, w, h);
-        println!("Version: {:?}, Permissions: {:x?}", version_string, permissions);
+        println!(
+            "Document {} has {} page(s) and is {}x{}",
+            title, num_pages, w, h
+        );
+        println!(
+            "Version: {:?}, Permissions: {:x?}",
+            version_string, permissions
+        );
 
         assert!(metadata.is_some());
         assert_eq!(version_string, Some("PDF-1.3".to_string()));
