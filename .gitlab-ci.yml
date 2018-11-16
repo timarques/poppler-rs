@@ -6,7 +6,7 @@ stages:
 
 before_script:
   - apt update
-  - apt install libpoppler-glib-dev libpoppler-dev libcairo2-dev libglib2.0-dev
+  - apt install --yes libpoppler-glib-dev libpoppler-dev libcairo2-dev libglib2.0-dev
   - rustup default nightly
 
 build:
