@@ -154,13 +154,12 @@ pub struct PoppperPageRef {
 
 #[cfg(test)]
 mod tests {
-    use cairo::enums::Format::ARgb32;
+    use cairo::Format;
     use cairo::prelude::SurfaceExt;
     use cairo::Context;
     use cairo::ImageSurface;
-    use cairo::PDFSurface;
+    use cairo::pdf;
     use std::{fs::File, io::Read};
-    use CairoSetSize;
     use PopplerDocument;
     use PopplerPage;
 
@@ -172,7 +171,7 @@ mod tests {
 
         println!("Document has {} page(s)", num_pages);
 
-        let mut surface = PDFSurface::create("output.pdf", 420.0, 595.0);
+        let mut surface = pdf::File::new(420.0, 595.0, "output.pdf");
         let mut ctx = Context::new(&mut surface);
 
         // FIXME: move iterator to poppler
@@ -222,7 +221,7 @@ mod tests {
 
         assert_eq!(title, "This is a test PDF file");
 
-        let mut surface = ImageSurface::create(ARgb32,  w as i32, h as i32).unwrap();
+        let mut surface = ImageSurface::create(Format::ARgb32, w as i32, h as i32).unwrap();
         let mut ctx = Context::new(&mut surface);
 
         ctx.save();
