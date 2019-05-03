@@ -1,3 +1,4 @@
+dist: xenial  # trusty's version of glib is too old
 language: rust
 rust:
   - stable

@@ -43,12 +43,5 @@ extern "C" {
     pub fn poppler_page_render(page: *mut PopplerPage, cairo: *mut cairo_sys::cairo_t);
     pub fn poppler_page_render_for_printing(page: *mut PopplerPage, cairo: *mut cairo_sys::cairo_t);
 
-    // FIXME: needs to be in upstream version of cairo-rs
-    pub fn cairo_pdf_surface_set_size(
-        surface: *mut cairo_sys::cairo_surface_t,
-        width_in_points: c_double,
-        height_in_points: c_double,
-    );
-
     pub fn poppler_page_get_text(page: *mut PopplerPage) -> *mut c_char;
 }
