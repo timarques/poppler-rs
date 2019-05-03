@@ -1,8 +1,6 @@
 use std::ffi::CStr;
 use std::ffi::CString;
-use std::os::raw::c_double;
-use std::os::raw::c_void;
-use std::os::raw::{c_char, c_int};
+use std::os::raw::{c_char, c_int, c_double};
 use std::path;
 
 extern crate cairo;
@@ -145,11 +143,6 @@ impl PopplerPage {
             ptr => unsafe { Some(CStr::from_ptr(ptr).to_str().unwrap()) },
         }
     }
-}
-
-#[derive(Debug)]
-pub struct PoppperPageRef {
-    ptr: *mut c_void,
 }
 
 #[cfg(test)]
