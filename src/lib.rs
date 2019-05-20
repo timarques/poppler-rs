@@ -174,7 +174,7 @@ mod tests {
         println!("Document has {} page(s)", num_pages);
 
         let mut surface = pdf::File::new(420.0, 595.0, "output.pdf");
-        let mut ctx = Context::new(&mut surface);
+        let ctx = Context::new(&mut surface);
 
         // FIXME: move iterator to poppler
         for page_num in 0..num_pages {
@@ -184,7 +184,7 @@ mod tests {
             surface.set_size(w, h);
 
             ctx.save();
-            page.render(&mut ctx);
+            page.render(&ctx);
 
             println!("Text: {:?}", page.get_text().unwrap_or(""));
 
@@ -224,10 +224,10 @@ mod tests {
         assert_eq!(title, "This is a test PDF file");
 
         let mut surface = ImageSurface::create(Format::ARgb32, w as i32, h as i32).unwrap();
-        let mut ctx = Context::new(&mut surface);
+        let ctx = Context::new(&mut surface);
 
         ctx.save();
-        page.render(&mut ctx);
+        page.render(&ctx);
         ctx.restore();
         ctx.show_page();
 
