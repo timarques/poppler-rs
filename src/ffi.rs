@@ -19,7 +19,7 @@ extern "C" {
         error: *mut *mut glib_sys::GError,
     ) -> *mut PopplerDocument;
     pub fn poppler_document_new_from_data(
-        data: *const c_char,
+        data: *mut c_char,
         length: c_int,
         password: *const c_char,
         error: *mut *mut glib_sys::GError,

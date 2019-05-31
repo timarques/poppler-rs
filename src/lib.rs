@@ -40,7 +40,7 @@ impl PopplerDocument {
         Ok(PopplerDocument(doc))
     }
     pub fn new_from_data(
-        data: &[u8],
+        data: &mut [u8],
         password: &str,
     ) -> Result<PopplerDocument, glib::error::Error> {
         if data.len() == 0 {
@@ -58,7 +58,7 @@ impl PopplerDocument {
 
         let doc = util::call_with_gerror(|err_ptr| unsafe {
             ffi::poppler_document_new_from_data(
-                data.as_ptr() as *const c_char,
+                data.as_mut_ptr() as *mut c_char,
                 data.len() as c_int,
                 pw.as_ptr(),
                 err_ptr,
@@ -240,7 +240,7 @@ mod tests {
         let mut file = File::open(path).unwrap();
         let mut data: Vec<u8> = Vec::new();
         file.read_to_end(&mut data).unwrap();
-        let doc: PopplerDocument = PopplerDocument::new_from_data(&data[..], "upw").unwrap();
+        let doc: PopplerDocument = PopplerDocument::new_from_data(&mut data[..], "upw").unwrap();
         let num_pages = doc.get_n_pages();
         let title = doc.get_title().unwrap();
         let metadata = doc.get_metadata();
@@ -265,8 +265,8 @@ mod tests {
 
     #[test]
     fn test3() {
-        let data = vec![];
+        let mut data = vec![];
 
-        assert!(PopplerDocument::new_from_data(&data[..], "upw").is_err());
+        assert!(PopplerDocument::new_from_data(&mut data[..], "upw").is_err());
     }
 }
