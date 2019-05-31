@@ -155,8 +155,8 @@ mod tests {
     use cairo::ImageSurface;
     use cairo::pdf;
     use std::{fs::File, io::Read};
-    use PopplerDocument;
-    use PopplerPage;
+    use crate::PopplerDocument;
+    use crate::PopplerPage;
 
     #[test]
     fn test1() {

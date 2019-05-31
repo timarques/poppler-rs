@@ -3,9 +3,10 @@ authors = ["Marc Brinkmann <git@marcbrinkmann.de>",
           "Denys Vitali <denys@denv.it>"]
 name = "poppler"
 license = "GPL-2.0"
-version = "0.2.5"
+version = "0.3.0"
 description = "Wrapper for the GPL-licensed Poppler PDF rendering library."
 repository = "https://github.com/DMSrs/poppler-rs"
+edition = "2018"
 
 [dependencies]
 cairo-rs = { version= "0.6.0", features = ["png", "pdf"]}
