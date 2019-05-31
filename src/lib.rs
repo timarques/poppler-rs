@@ -123,8 +123,8 @@ impl PopplerPage {
         unsafe {
             ffi::poppler_page_get_size(
                 self.0,
-                &mut width as *mut f64 as *mut c_double,
-                &mut height as *mut f64 as *mut c_double,
+                &mut width as *mut c_double,
+                &mut height as *mut c_double,
             )
         }
 
