@@ -42,7 +42,23 @@ fn main() {
         //
         .whitelist_type("guint16")
         // blacklist those who are defined in other modules
-        .blacklist_type("_PopplerDest") // poppler-action.h
+        // poppler-action.h
+        .blacklist_type("_PopplerAction")
+        .blacklist_type("_PopplerDest")
+        .blacklist_type("_PopplerActionLayer")
+        // poppler-attachment.h
+        .blacklist_type("_PopplerAttachment")
+        // poppler-page.h
+        .blacklist_type("_PopplerPoint")
+        .blacklist_type("_PopplerRectangle")
+        .blacklist_type("_PopplerTextAttributes")
+        .blacklist_type("_PopplerColor")
+        .blacklist_type("_PopplerLinkMapping")
+        .blacklist_type("_PopplerPageTransition")
+        .blacklist_type("_PopplerImageMapping")
+        .blacklist_type("_PopplerFormFieldMapping")
+        .blacklist_type("_PopplerAnnotMapping")
+        .blacklist_type("_PopplerQuadrilateral")
         //
         .generate()
         .expect("Unable to generate bindings");
@@ -54,7 +70,23 @@ fn main() {
         .whitelist_type("_?Poppler.*")
         .whitelist_function("poppler_.*")
         //
-        .blacklist_type("_PopplerDest") // poppler-action.h
+        // poppler-action.h
+        .blacklist_type("_PopplerAction")
+        .blacklist_type("_PopplerDest")
+        .blacklist_type("_PopplerActionLayer")
+        // poppler-attachment.h
+        .blacklist_type("_PopplerAttachment")
+        //
+        .blacklist_type("_PopplerPoint") // poppler-page.h
+        .blacklist_type("_PopplerRectangle") // poppler-page.h
+        .blacklist_type("_PopplerTextAttributes") // poppler-page.h
+        .blacklist_type("_PopplerColor") // poppler-page.h
+        .blacklist_type("_PopplerLinkMapping") // poppler-page.h
+        .blacklist_type("_PopplerPageTransition") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerImageMapping") // poppler-page.h
+        .blacklist_type("_PopplerFormFieldMapping") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerAnnotMapping") // poppler-page.h
+        .blacklist_type("_PopplerQuadrilateral") // poppler-page.h
         .whitelist_type("goffset")
         .whitelist_type("gint64")
         //
@@ -68,7 +100,23 @@ fn main() {
         .whitelist_type("_?Poppler.*")
         .whitelist_function("poppler_.*")
         //
-        .blacklist_type("_PopplerDest") // poppler-action.h
+        // poppler-action.h
+        .blacklist_type("_PopplerAction")
+        .blacklist_type("_PopplerDest")
+        .blacklist_type("_PopplerActionLayer")
+        // poppler-attachment.h
+        .blacklist_type("_PopplerAttachment")
+        // explicit
+        .whitelist_type("_PopplerPoint") // explicit
+        .whitelist_type("_PopplerRectangle") // explicit
+        .whitelist_type("_PopplerTextAttributes") // explicit
+        .whitelist_type("_PopplerColor") // explicit
+        .whitelist_type("_PopplerLinkMapping") // explicit
+        .whitelist_type("_PopplerPageTransition") // explicit // poppler-private.h
+        .whitelist_type("_PopplerImageMapping") // explicit
+        .whitelist_type("_PopplerFormFieldMapping") // explicit // poppler-private.h
+        .whitelist_type("_PopplerAnnotMapping") // explicit
+        .whitelist_type("_PopplerQuadrilateral") // explicit
         //
         .generate()
         .expect("Unable to generate bindings");
@@ -80,18 +128,86 @@ fn main() {
         .whitelist_type("_?Poppler.*")
         .whitelist_function("poppler_.*")
         // 
+        // poppler-attachment.h
+        .blacklist_type("_PopplerAttachment")
+        //
+        .blacklist_type("_PopplerPoint") // poppler-page.h
+        .blacklist_type("_PopplerRectangle") // poppler-page.h
+        .blacklist_type("_PopplerTextAttributes") // poppler-page.h
+        .blacklist_type("_PopplerColor") // poppler-page.h
+        .blacklist_type("_PopplerLinkMapping") // poppler-page.h
+        .blacklist_type("_PopplerPageTransition") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerImageMapping") // poppler-page.h
+        .blacklist_type("_PopplerFormFieldMapping") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerAnnotMapping") // poppler-page.h
+        .blacklist_type("_PopplerQuadrilateral") // poppler-page.h
         .whitelist_type("guint8")
-        .whitelist_type("_PopplerDest") // explicit
+        // explicit
+        .whitelist_type("_PopplerAction")
+        .whitelist_type("_PopplerDest")
+        .whitelist_type("_PopplerActionLayer")
         //
         .generate()
         .expect("Unable to generate bindings");
     into_bindings(b_action, "poppler_action");
     
+    // TODO: check form here on
+    let b_annot = blacklist_types(builder())
+        .header("build/poppler_annot_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        // 
+        // poppler-action.h
+        .blacklist_type("_PopplerAction")
+        .blacklist_type("_PopplerDest")
+        .blacklist_type("_PopplerActionLayer")
+        // poppler-attachment.h
+        .blacklist_type("_PopplerAttachment")
+        //
+        .blacklist_type("_PopplerPoint") // poppler-page.h
+        .blacklist_type("_PopplerRectangle") // poppler-page.h
+        .blacklist_type("_PopplerTextAttributes") // poppler-page.h
+        .blacklist_type("_PopplerColor") // poppler-page.h
+        .blacklist_type("_PopplerLinkMapping") // poppler-page.h
+        .blacklist_type("_PopplerPageTransition") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerImageMapping") // poppler-page.h
+        .blacklist_type("_PopplerFormFieldMapping") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerAnnotMapping") // poppler-page.h
+        .blacklist_type("_PopplerQuadrilateral") // poppler-page.h
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_annot, "poppler_annot");
+
+    let b_attachment = blacklist_types(builder())
+        .header("build/poppler_attachment_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        // 
+        // poppler-action.h
+        .blacklist_type("_PopplerAction")
+        .blacklist_type("_PopplerDest")
+        .blacklist_type("_PopplerActionLayer")
+        //
+        .blacklist_type("_PopplerPoint") // poppler-page.h
+        .blacklist_type("_PopplerRectangle") // poppler-page.h
+        .blacklist_type("_PopplerTextAttributes") // poppler-page.h
+        .blacklist_type("_PopplerColor") // poppler-page.h
+        .blacklist_type("_PopplerLinkMapping") // poppler-page.h
+        .blacklist_type("_PopplerPageTransition") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerImageMapping") // poppler-page.h
+        .blacklist_type("_PopplerFormFieldMapping") // poppler-private.h // poppler-page.h
+        .blacklist_type("_PopplerAnnotMapping") // poppler-page.h
+        .blacklist_type("_PopplerQuadrilateral") // poppler-page.h
+        // explicit
+        .whitelist_type("_PopplerAttachment")
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_attachment, "poppler_attachment");
 
 
     // TODO
-    // poppler_annot_wrp.h
-    // poppler_attachment_wrp.h
     // poppler_features_wrp.h
     // poppler_form_field_wrp.h
     // poppler_layer_wrp.h
@@ -116,55 +232,61 @@ fn blacklist_types(builder: bindgen::Builder) ->  bindgen::Builder {
         .blacklist_type("PopplerFindFlags")
         .blacklist_type("PopplerBackend")
         //
-        .blacklist_type("_PopplerDocument")
+        .blacklist_type("_PopplerDocument") // poppler-private.h
         .blacklist_type("PopplerDocument")
         .blacklist_type("_PopplerIndexIter")
         .blacklist_type("PopplerIndexIter")
         .blacklist_type("_PopplerFontsIter")
         .blacklist_type("PopplerFontsIter")
-        .blacklist_type("_PopplerLayersIter")
+        .blacklist_type("_PopplerLayersIter") // poppler-private.h
         .blacklist_type("PopplerLayersIter")
-        .blacklist_type("_PopplerPoint")
+        // poppler-page.h
+        // .blacklist_type("_PopplerPoint")
         .blacklist_type("PopplerPoint")
-        .blacklist_type("_PopplerRectangle")
+        // .blacklist_type("_PopplerRectangle")
         .blacklist_type("PopplerRectangle")
-        .blacklist_type("_PopplerTextAttributes")
+        // .blacklist_type("_PopplerTextAttributes")
         .blacklist_type("PopplerTextAttributes")
-        .blacklist_type("_PopplerColor")
+        // .blacklist_type("_PopplerColor")
         .blacklist_type("PopplerColor")
-        .blacklist_type("_PopplerLinkMapping")
+        // .blacklist_type("_PopplerLinkMapping")
         .blacklist_type("PopplerLinkMapping")
-        .blacklist_type("_PopplerPageTransition")
+        // .blacklist_type("_PopplerPageTransition") // poppler-private.h
         .blacklist_type("PopplerPageTransition")
-        .blacklist_type("_PopplerImageMapping")
+        // .blacklist_type("_PopplerImageMapping")
         .blacklist_type("PopplerImageMapping")
-        .blacklist_type("_PopplerFormFieldMapping")
+        // .blacklist_type("_PopplerFormFieldMapping") // poppler-private.h
         .blacklist_type("PopplerFormFieldMapping")
-        .blacklist_type("_PopplerAnnotMapping")
+        // .blacklist_type("_PopplerAnnotMapping")
         .blacklist_type("PopplerAnnotMapping")
+        // .blacklist_type("_PopplerQuadrilateral")
+        //
+        .blacklist_type("PopplerQuadrilateral")
         .blacklist_type("_PopplerPage")
         .blacklist_type("PopplerPage")
-        .blacklist_type("_PopplerFontInfo")
+        .blacklist_type("_PopplerFontInfo") // poppler-private.h
         .blacklist_type("PopplerFontInfo")
         .blacklist_type("_PopplerLayer")
         .blacklist_type("PopplerLayer")
-        .blacklist_type("_PopplerPSFile")
+        .blacklist_type("_PopplerPSFile") // poppler-private.h
         .blacklist_type("PopplerPSFile")
-        .blacklist_type("_PopplerAction")
+        // poppler-action.h
+        // .blacklist_type("_PopplerAction")
         .blacklist_type("PopplerAction")
-        // .blacklist_type("_PopplerDest") // poppler-action.h
+        // .blacklist_type("_PopplerDest")
         .blacklist_type("PopplerDest")
-        .blacklist_type("_PopplerActionLayer")
+        // .blacklist_type("_PopplerActionLayer")
         .blacklist_type("PopplerActionLayer")
+        //
         .blacklist_type("_PopplerFormField")
         .blacklist_type("PopplerFormField")
-        .blacklist_type("_PopplerAttachment")
+        // .blacklist_type("_PopplerAttachment") // poppler-attachment.h
         .blacklist_type("PopplerAttachment")
         .blacklist_type("_PopplerMovie")
         .blacklist_type("PopplerMovie")
         .blacklist_type("_PopplerMedia")
         .blacklist_type("PopplerMedia")
-        .blacklist_type("_PopplerAnnot")
+        .blacklist_type("_PopplerAnnot") // poppler-private.h
         .blacklist_type("PopplerAnnot")
         .blacklist_type("_PopplerAnnotMarkup")
         .blacklist_type("PopplerAnnotMarkup")
@@ -188,9 +310,7 @@ fn blacklist_types(builder: bindgen::Builder) ->  bindgen::Builder {
         .blacklist_type("PopplerAnnotCircle")
         .blacklist_type("_PopplerAnnotSquare")
         .blacklist_type("PopplerAnnotSquare")
-        .blacklist_type("_PopplerQuadrilateral")
-        .blacklist_type("PopplerQuadrilateral")
-        .blacklist_type("_PopplerStructureElement")
+        .blacklist_type("_PopplerStructureElement") // poppler-private.h
         .blacklist_type("PopplerStructureElement")
         .blacklist_type("_PopplerStructureElementIter")
         .blacklist_type("PopplerStructureElementIter")

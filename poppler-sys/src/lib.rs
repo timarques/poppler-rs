@@ -26,7 +26,20 @@ mod dep_types {
 
 pub mod poppler {
     use super::dep_types::*;
-    use super::poppler_action::_PopplerDest;
+    use super::poppler_action::{_PopplerAction, _PopplerDest, _PopplerActionLayer};
+    use super::poppler_attachment::_PopplerAttachment;
+    use super::poppler_page::{
+        _PopplerPoint,
+        _PopplerRectangle,
+        _PopplerTextAttributes,
+        _PopplerColor,
+        _PopplerLinkMapping,
+        _PopplerPageTransition,
+        _PopplerImageMapping,
+        _PopplerFormFieldMapping,
+        _PopplerAnnotMapping,
+        _PopplerQuadrilateral
+    };
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler.rs"));
 }
 
@@ -51,6 +64,16 @@ pub mod poppler_action {
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler_action.rs"));
 }
 
-fn my_lib() {
-    println!("hello world");
+pub mod poppler_annot {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_annot.rs"));
+}
+
+pub mod poppler_attachment {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_attachment.rs"));
 }
