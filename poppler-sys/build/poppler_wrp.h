@@ -1,3 +1,4 @@
+// disable all modules
 #define __POPPLER_DOCUMENT_H__
 #define __POPPLER_PAGE_H__
 #define __POPPLER_ACTION_H__
@@ -11,4 +12,6 @@
 #define POPPLER_ENUMS_H
 #define __POPPLER_DATE_H__
 #define __POPPLER_STRUCTURE_ELEMENT_H__
+
+// the base header
 #include "poppler/glib/poppler.h"

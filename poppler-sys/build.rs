@@ -28,9 +28,94 @@ fn into_bindings(builder: bindgen::Bindings, name: &str) {
         .expect("Couldn't write bindings!");
 }
 
+
+
+fn main() {
+    println!("cargo:rustc-link-lib=poppler");
+    println!("cargo:rerun-if-changed=poppler");
+
+    // main poppler module
+    let b_poppler = builder()
+        .header("build/poppler_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        //
+        .whitelist_type("guint16")
+        // blacklist those who are defined in other modules
+        .blacklist_type("_PopplerDest") // poppler-action.h
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_poppler, "poppler");
+
+    // poppler-document module
+    let b_document = blacklist_types(builder())
+        .header("build/poppler_document_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        //
+        .blacklist_type("_PopplerDest") // poppler-action.h
+        .whitelist_type("goffset")
+        .whitelist_type("gint64")
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_document, "poppler_document");
+
+    // poppler-page module
+    let b_page = blacklist_types(builder())
+        .header("build/poppler_page_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        //
+        .blacklist_type("_PopplerDest") // poppler-action.h
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_page, "poppler_page");
+
+    // poppler-action module
+    let b_action = blacklist_types(builder())
+        .header("build/poppler_action_wrp.h")
+        .whitelist_type("_?Poppler.*")
+        .whitelist_function("poppler_.*")
+        // 
+        .whitelist_type("guint8")
+        .whitelist_type("_PopplerDest") // explicit
+        //
+        .generate()
+        .expect("Unable to generate bindings");
+    into_bindings(b_action, "poppler_action");
+    
+
+
+    // TODO
+    // poppler_annot_wrp.h
+    // poppler_attachment_wrp.h
+    // poppler_features_wrp.h
+    // poppler_form_field_wrp.h
+    // poppler_layer_wrp.h
+    // poppler_media_wrp.h
+    // poppler_movie_wrp.h
+}
+
 /// Prevent re-defition of some types.
 fn blacklist_types(builder: bindgen::Builder) ->  bindgen::Builder {
     builder
+        //
+        .blacklist_function("poppler_error_quark")
+        .blacklist_function("poppler_get_backend")
+        .blacklist_function("poppler_get_version")
+        //
+        .blacklist_type("PopplerError")
+        .blacklist_type("PopplerPageTransitionType")
+        .blacklist_type("PopplerPageTransitionAlignment")
+        .blacklist_type("PopplerPageTransitionDirection")
+        .blacklist_type("PopplerSelectionStyle")
+        .blacklist_type("PopplerPrintFlags")
+        .blacklist_type("PopplerFindFlags")
+        .blacklist_type("PopplerBackend")
+        //
         .blacklist_type("_PopplerDocument")
         .blacklist_type("PopplerDocument")
         .blacklist_type("_PopplerIndexIter")
@@ -67,7 +152,7 @@ fn blacklist_types(builder: bindgen::Builder) ->  bindgen::Builder {
         .blacklist_type("PopplerPSFile")
         .blacklist_type("_PopplerAction")
         .blacklist_type("PopplerAction")
-        .blacklist_type("_PopplerDest")
+        // .blacklist_type("_PopplerDest") // poppler-action.h
         .blacklist_type("PopplerDest")
         .blacklist_type("_PopplerActionLayer")
         .blacklist_type("PopplerActionLayer")
@@ -111,30 +196,5 @@ fn blacklist_types(builder: bindgen::Builder) ->  bindgen::Builder {
         .blacklist_type("PopplerStructureElementIter")
         .blacklist_type("_PopplerTextSpan")
         .blacklist_type("PopplerTextSpan")
-}
-
-fn main() {
-    println!("cargo:rustc-link-lib=poppler");
-    println!("cargo:rerun-if-changed=poppler");
-
-    // main poppler module
-    let b_poppler = builder()
-        .header("build/poppler_wrp.h")
-        .whitelist_type("_?Poppler.*")
-        .whitelist_type("guint16")
-        .whitelist_function("poppler_.*")
-        .generate()
-        .expect("Unable to generate bindings");
-    into_bindings(b_poppler, "poppler");
-
-    // poppler-document module
-    let b_document = blacklist_types(builder())
-        .header("build/poppler_document_wrp.h")
-        .whitelist_type("_?Poppler.*")
-        .whitelist_type("goffset")
-        .whitelist_type("gint64")
-        .whitelist_function("poppler_.*")
-        .generate()
-        .expect("Unable to generate bindings");
-    into_bindings(b_document, "poppler_document");
+        //
 }

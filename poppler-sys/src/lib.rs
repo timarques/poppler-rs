@@ -14,7 +14,6 @@ extern crate gio_sys;
 extern crate gobject_sys;
 extern crate gtypes;
 
-
 mod dep_types {
     pub use gtypes::{gchar, gint, gdouble, gsize, guint};
     pub use std::os::raw::{c_char, c_int, c_uint, c_long, c_uchar, c_ulong, c_ushort};
@@ -27,6 +26,7 @@ mod dep_types {
 
 pub mod poppler {
     use super::dep_types::*;
+    use super::poppler_action::_PopplerDest;
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler.rs"));
 }
 
@@ -37,14 +37,19 @@ pub mod poppler_document {
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler_document.rs"));
 }
 
-// pub mod poppler_page {
-//     use super::dep_types::*;
+pub mod poppler_page {
+    use super::dep_types::*;
+    use super::poppler::*;
 
-//     include!(concat!(env!("OUT_DIR"), "/bindings_poppler_page.rs"));
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_page.rs"));
+}
 
-// }
+pub mod poppler_action {
+    use super::dep_types::*;
+    use super::poppler::*;
 
-// include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_action.rs"));
+}
 
 fn my_lib() {
     println!("hello world");
