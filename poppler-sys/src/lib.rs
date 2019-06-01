@@ -40,6 +40,8 @@ pub mod poppler {
         _PopplerAnnotMapping,
         _PopplerQuadrilateral
     };
+    use super::poppler_annot::_PopplerAnnotCalloutLine;
+    use super::poppler_movie::_PopplerMovie;
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler.rs"));
 }
 
@@ -76,4 +78,32 @@ pub mod poppler_attachment {
     use super::poppler::*;
 
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler_attachment.rs"));
+}
+
+pub mod poppler_form_field {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_form_field.rs"));
+}
+
+pub mod poppler_layer {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_layer.rs"));
+}
+
+pub mod poppler_media {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_media.rs"));
+}
+
+pub mod poppler_movie {
+    use super::dep_types::*;
+    use super::poppler::*;
+
+    include!(concat!(env!("OUT_DIR"), "/bindings_poppler_movie.rs"));
 }
