@@ -2,4 +2,4 @@
 
 // actual header
 #undef __POPPLER_DOCUMENT_H__
-#include "poppler/glib/poppler-document.h"
+#include <poppler/glib/poppler-document.h>

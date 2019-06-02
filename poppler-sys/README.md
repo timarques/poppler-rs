@@ -2,73 +2,27 @@
 
 Low level bindings to [poppler](https://gitlab.freedesktop.org/poppler/poppler).
 
-## Features
+## Features (TODO)
 
-glib-api
-qt5-api
-cpp-api
+- glib-api
+- qt5-api
+- cpp-api
 
-## Bindings for poppler-0.77.0
+For now, only glib api is available.
 
-To regenerate the bindings:
+## Bindings
 
-``` bash
-export POPPLER_TAG="0.77.0"
+Run `cargo run` on `poppler-sys` directory for binding generation.
+(various modules are generated independently so this may take a while because of redundant generation)
 
-# 1. get and checkout poppler
-# (at poppler-sys/)
-echo ">checking requirements.." \
-&& clang --version \
-&& echo ">getting and updating poppler.." \
-&& git submodule update --init \
-&& echo ">checking out to poppler-$POPPLER_TAG.." \
-&& cd poppler \
-&& git checkout poppler-$POPPLER_TAG \
-&& cd .. \
-&& echo ">finished." \
-|| >&2 echo ">some error occurred"
+Links to:
+- `poppler` (dynamic)
 
-# 2. build process so final source files are generated
-# (commands based on poppler/INSTALL)
-# (at poppler-sys/)
-mkdir poppler/build \
-&& cd poppler/build \
-&& cmake .. \
-&& echo ">sucessfully generated part of final source files."
-&& cd ../.. \
-|| >&2 echo ">some error occurred"
+Build-depends on:
+- `pkg-config`
+- `poppler`
+- `cairo`
+- `glib-2.0`
 
-# depending on the apis that you want, you'll have to
-# generate it for glib, qt5 or directly for cpp.
-
-# 2.1 for glib api..
-# (at poppler-sys/)
-cd poppler/build/glib \
-&& make \
-&& cd ../../.. \
-&& echo ">sucessfully generated final glib source files." \
-|| >&2 echo ">some error occurred"
-# ps. actually, only few pre-processing commands should be
-# required to be executed
-
-# 2.2 for qt5 api..
-# (at poppler-sys/)
-cd poppler/build/qt5 \
-&& make \
-&& cd ../../.. \
-&& echo ">sucessfully generated final qt5 source files." \
-|| >&2 echo ">some error occurred"
-# ps. actually, only few pre-processing commands should be
-# required to be executed
-
-# 2.3 for cpp api..
-# (at poppler-sys/)
-cd poppler/build/cpp \
-&& make \
-&& cd ../../.. \
-&& echo ">sucessfully generated final cpp source files." \
-|| >&2 echo ">some error occurred"
-# ps. actually, only few pre-processing commands should be
-# required to be executed
-```
-
+The bindings configuration tweaks assumes `poppler-0.77.0`,
+but they may work fine on other versions.

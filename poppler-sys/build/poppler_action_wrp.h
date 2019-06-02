@@ -2,4 +2,4 @@
 
 // actual header
 #undef __POPPLER_ACTION_H__
-#include "poppler/glib/poppler-action.h"
+#include <poppler/glib/poppler-action.h>

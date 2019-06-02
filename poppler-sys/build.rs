@@ -1,19 +1,36 @@
 extern crate bindgen;
 extern crate semver;
+extern crate pkg_config;
 
 use std::env;
 use std::path::PathBuf;
 
 /// Initialize the builder with some include paths
 fn builder() -> bindgen::Builder {
-    bindgen::Builder::default()
-        .clang_arg("-I").clang_arg("/usr/include/glib-2.0")
-        .clang_arg("-I").clang_arg("/usr/lib/glib-2.0/include")
-        .clang_arg("-I").clang_arg("/usr/include/cairo")
-        .clang_arg("-I").clang_arg("poppler/glib")
-        .clang_arg("-I").clang_arg("poppler/build/glib")
-        .clang_arg("-I").clang_arg("build")
+    let mut builder = bindgen::Builder::default();
+
+    // have glib2 and cairo be included into clang
+    let glib2 = pkg_config::Config::new()
+        .atleast_version("2.60.0")
+        .probe("glib-2.0")
+        .expect("pkg-config could not find glib-2.0");
+    let cairo = pkg_config::Config::new()
+        .atleast_version("1.16.0")
+        .probe("cairo")
+        .expect("pkg-config could not find cairo");
+    for incl in glib2.include_paths.iter()
+        .chain(&cairo.include_paths) {
+        builder = builder
+            .clang_args(&["-I", incl.to_str().unwrap()]);
+    }
+
+    // have wrapping headers be included into clang
+    // (the wrapping headers use files from poppler as a library,
+    // already linked into rustc)
+    builder.clang_arg("-I").clang_arg("build")
+        // extra options
         .whitelist_recursively(false)
+        // TODO: also add more types and functions? (cairo, etc)
         .whitelist_type("_?Poppler.*")
         .whitelist_function("poppler_.*")
         .whitelist_var("_?Poppler.*")
@@ -32,11 +49,15 @@ fn into_bindings(builder: bindgen::Bindings, name: &str) {
         .expect("Couldn't write bindings!");
 }
 
-
-
 fn main() {
-    println!("cargo:rustc-link-lib=poppler");
-    println!("cargo:rerun-if-changed=poppler");
+    // have poppler be linked into rustc
+    pkg_config::Config::new()
+        .atleast_version("0.76.0")
+        .probe("poppler")
+        .expect("pkg-config could not find poppler")
+        .libs
+        .iter()
+        .for_each(|lib| println!("cargo:rustc-link-lib={}", lib));
 
     // main poppler module
     let b_poppler = builder()
@@ -316,7 +337,7 @@ fn main() {
         .expect("Unable to generate bindings");
     into_bindings(b_media, "poppler_media");
 
-    // poppler-media module
+    // poppler-movie module
     let b_movie = blacklist_types(builder())
         .header("build/poppler_movie_wrp.h")
         // 

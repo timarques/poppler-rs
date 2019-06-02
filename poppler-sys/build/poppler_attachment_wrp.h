@@ -2,4 +2,4 @@
 
 // actual header
 #undef __POPPLER_ATTACHMENT_H__
-#include "poppler/glib/poppler-attachment.h"
+#include <poppler/glib/poppler-attachment.h>

@@ -14,4 +14,5 @@
 #define __POPPLER_STRUCTURE_ELEMENT_H__
 
 // the base header
-#include "poppler/glib/poppler.h"
+#include <poppler/glib/poppler.h>
+// #include "poppler/glib/poppler.h"

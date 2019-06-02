@@ -1,3 +1,0 @@
-[submodule "poppler-sys/poppler"]
-	path = poppler-sys/poppler
-	url = https://gitlab.freedesktop.org/poppler/poppler
