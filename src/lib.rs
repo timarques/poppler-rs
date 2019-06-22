@@ -4,7 +4,6 @@ extern crate glib;
 extern crate glib_sys;
 extern crate poppler_sys;
 
-// mod ffi;
 mod util;
 
 use poppler_sys::{poppler_document as sys_doc, poppler_page as sys_pg, poppler as sys};
