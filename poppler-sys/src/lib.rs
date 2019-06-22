@@ -8,40 +8,35 @@
 
 extern crate cairo;
 extern crate cairo_sys;
+extern crate gio_sys;
 extern crate glib;
 extern crate glib_sys;
-extern crate gio_sys;
 extern crate gobject_sys;
 extern crate gtypes;
 
 mod dep_types {
-    pub use gtypes::{gchar, gint, gdouble, gsize, guint};
-    pub use std::os::raw::{c_char, c_int, c_uint, c_long, c_uchar, c_ulong, c_ushort};
-    pub use cairo_sys::{cairo_t, cairo_surface_t, cairo_region_t};
-    pub use glib_sys::{GType, GError, gboolean, gpointer, GDate, GArray, GList, GTime, GString, GQuark};
+    pub use cairo_sys::{cairo_region_t, cairo_surface_t, cairo_t};
+    pub use glib_sys::{
+        gboolean, gpointer, GArray, GDate, GError, GList, GQuark, GString, GTime, GType,
+    };
     pub use gobject_sys::{GObject, GObjectClass};
+    pub use gtypes::{gchar, gdouble, gint, gsize, guint};
+    pub use std::os::raw::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort};
     pub type time_t = c_long;
-    pub use gio_sys::{GCancellable, GInputStream, GFile};
+    pub use gio_sys::{GCancellable, GFile, GInputStream};
 }
 
 pub mod poppler {
     use super::dep_types::*;
-    use super::poppler_action::{_PopplerAction, _PopplerDest, _PopplerActionLayer};
-    use super::poppler_attachment::_PopplerAttachment;
-    use super::poppler_page::{
-        _PopplerPoint,
-        _PopplerRectangle,
-        _PopplerTextAttributes,
-        _PopplerColor,
-        _PopplerLinkMapping,
-        _PopplerPageTransition,
-        _PopplerImageMapping,
-        _PopplerFormFieldMapping,
-        _PopplerAnnotMapping,
-        _PopplerQuadrilateral
-    };
+    use super::poppler_action::{_PopplerAction, _PopplerActionLayer, _PopplerDest};
     use super::poppler_annot::_PopplerAnnotCalloutLine;
+    use super::poppler_attachment::_PopplerAttachment;
     use super::poppler_movie::_PopplerMovie;
+    use super::poppler_page::{
+        _PopplerAnnotMapping, _PopplerColor, _PopplerFormFieldMapping, _PopplerImageMapping,
+        _PopplerLinkMapping, _PopplerPageTransition, _PopplerPoint, _PopplerQuadrilateral,
+        _PopplerRectangle, _PopplerTextAttributes,
+    };
     include!(concat!(env!("OUT_DIR"), "/bindings_poppler.rs"));
 }
 
