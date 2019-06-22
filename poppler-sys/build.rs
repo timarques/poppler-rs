@@ -5,16 +5,22 @@ extern crate pkg_config;
 use std::env;
 use std::path::PathBuf;
 
+// TODO: observe recomendations and standards from
+// - https://kornel.ski/rust-sys-crate
+// - https://rust-lang.github.io/rust-bindgen/introduction.html
+
 /// Initialize the builder with some include paths
 fn builder() -> bindgen::Builder {
     let mut builder = bindgen::Builder::default();
 
     // have glib2 and cairo be included into clang
     let glib2 = pkg_config::Config::new()
+        .cargo_metadata(false)
         .atleast_version("2.60.0")
         .probe("glib-2.0")
         .expect("pkg-config could not find glib-2.0");
     let cairo = pkg_config::Config::new()
+        .cargo_metadata(false)
         .atleast_version("1.16.0")
         .probe("cairo")
         .expect("pkg-config could not find cairo");
@@ -52,6 +58,7 @@ fn into_bindings(builder: bindgen::Bindings, name: &str) {
 fn main() {
     // have poppler be linked into rustc
     pkg_config::Config::new()
+        .cargo_metadata(false)
         .atleast_version("0.76.0")
         .probe("poppler")
         .expect("pkg-config could not find poppler")

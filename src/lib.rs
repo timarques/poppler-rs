@@ -1,3 +1,13 @@
+extern crate cairo;
+extern crate cairo_sys;
+extern crate glib;
+extern crate glib_sys;
+extern crate poppler_sys;
+
+// mod ffi;
+mod util;
+
+use poppler_sys::{poppler_document as sys_doc, poppler_page as sys_pg, poppler as sys};
 use std::ffi::CStr;
 use std::ffi::CString;
 use std::os::raw::c_double;
@@ -5,20 +15,11 @@ use std::os::raw::c_void;
 use std::os::raw::{c_char, c_int};
 use std::path;
 
-extern crate cairo;
-
-extern crate cairo_sys;
-extern crate glib;
-extern crate glib_sys;
-
-mod ffi;
-mod util;
+#[derive(Debug)]
+pub struct PopplerDocument(*mut sys::PopplerDocument);
 
 #[derive(Debug)]
-pub struct PopplerDocument(*mut ffi::PopplerDocument);
-
-#[derive(Debug)]
-pub struct PopplerPage(*mut ffi::PopplerPage);
+pub struct PopplerPage(*mut sys::PopplerPage);
 
 impl PopplerDocument {
     pub fn new_from_file<P: AsRef<path::Path>>(
@@ -34,13 +35,13 @@ impl PopplerDocument {
 
         let path_cstring = util::path_to_glib_url(p)?;
         let doc = util::call_with_gerror(|err_ptr| unsafe {
-            ffi::poppler_document_new_from_file(path_cstring.as_ptr(), pw.as_ptr(), err_ptr)
+            sys_doc::poppler_document_new_from_file(path_cstring.as_ptr(), pw.as_ptr(), err_ptr)
         })?;
 
         Ok(PopplerDocument(doc))
     }
     pub fn new_from_data(
-        data: &[u8],
+        data: &mut [u8],
         password: &str,
     ) -> Result<PopplerDocument, glib::error::Error> {
         if data.len() == 0 {
@@ -57,8 +58,8 @@ impl PopplerDocument {
         })?;
 
         let doc = util::call_with_gerror(|err_ptr| unsafe {
-            ffi::poppler_document_new_from_data(
-                data.as_ptr() as *const c_char,
+            sys_doc::poppler_document_new_from_data(
+                data.as_mut_ptr() as *mut c_char,
                 data.len() as c_int,
                 pw.as_ptr(),
                 err_ptr,
@@ -69,7 +70,7 @@ impl PopplerDocument {
     }
     pub fn get_title(&self) -> Option<String> {
         unsafe {
-            let ptr: *mut c_char = ffi::poppler_document_get_title(self.0);
+            let ptr: *mut c_char = sys_doc::poppler_document_get_title(self.0);
             if ptr.is_null() {
                 None
             } else {
@@ -79,7 +80,7 @@ impl PopplerDocument {
     }
     pub fn get_metadata(&self) -> Option<String> {
         unsafe {
-            let ptr: *mut c_char = ffi::poppler_document_get_metadata(self.0);
+            let ptr: *mut c_char = sys_doc::poppler_document_get_metadata(self.0);
             if ptr.is_null() {
                 None
             } else {
@@ -89,7 +90,7 @@ impl PopplerDocument {
     }
     pub fn get_pdf_version_string(&self) -> Option<String> {
         unsafe {
-            let ptr: *mut c_char = ffi::poppler_document_get_pdf_version_string(self.0);
+            let ptr: *mut c_char = sys_doc::poppler_document_get_pdf_version_string(self.0);
             if ptr.is_null() {
                 None
             } else {
@@ -98,17 +99,17 @@ impl PopplerDocument {
         }
     }
     pub fn get_permissions(&self) -> u8 {
-        unsafe { ffi::poppler_document_get_permissions(self.0) as u8 }
+        unsafe { sys_doc::poppler_document_get_permissions(self.0) as u8 }
     }
 
     pub fn get_n_pages(&self) -> usize {
         // FIXME: what's the correct type here? can we assume a document
         //        has a positive number of pages?
-        (unsafe { ffi::poppler_document_get_n_pages(self.0) }) as usize
+        (unsafe { sys_doc::poppler_document_get_n_pages(self.0) }) as usize
     }
 
     pub fn get_page(&self, index: usize) -> Option<PopplerPage> {
-        match unsafe { ffi::poppler_document_get_page(self.0, index as c_int) } {
+        match unsafe { sys_doc::poppler_document_get_page(self.0, index as c_int) } {
             ptr if ptr.is_null() => None,
             ptr => Some(PopplerPage(ptr)),
         }
@@ -121,7 +122,7 @@ impl PopplerPage {
         let mut height: f64 = 0.0;
 
         unsafe {
-            ffi::poppler_page_get_size(
+            sys_pg::poppler_page_get_size(
                 self.0,
                 &mut width as *mut f64 as *mut c_double,
                 &mut height as *mut f64 as *mut c_double,
@@ -133,16 +134,16 @@ impl PopplerPage {
 
     pub fn render(&self, ctx: &cairo::Context) {
         let ctx_raw = ctx.to_raw_none();
-        unsafe { ffi::poppler_page_render(self.0, ctx_raw) }
+        unsafe { sys_pg::poppler_page_render(self.0, ctx_raw) }
     }
 
     pub fn render_for_printing(&self, ctx: &cairo::Context) {
         let ctx_raw = ctx.to_raw_none();
-        unsafe { ffi::poppler_page_render_for_printing(self.0, ctx_raw) }
+        unsafe { sys_pg::poppler_page_render_for_printing(self.0, ctx_raw) }
     }
 
     pub fn get_text(&self) -> Option<&str> {
-        match unsafe { ffi::poppler_page_get_text(self.0) } {
+        match unsafe { sys_pg::poppler_page_get_text(self.0) } {
             ptr if ptr.is_null() => None,
             ptr => unsafe { Some(CStr::from_ptr(ptr).to_str().unwrap()) },
         }
@@ -240,7 +241,7 @@ mod tests {
         let mut file = File::open(path).unwrap();
         let mut data: Vec<u8> = Vec::new();
         file.read_to_end(&mut data).unwrap();
-        let doc: PopplerDocument = PopplerDocument::new_from_data(&data[..], "upw").unwrap();
+        let doc: PopplerDocument = PopplerDocument::new_from_data(&mut data[..], "upw").unwrap();
         let num_pages = doc.get_n_pages();
         let title = doc.get_title().unwrap();
         let metadata = doc.get_metadata();
@@ -265,8 +266,8 @@ mod tests {
 
     #[test]
     fn test3() {
-        let data = vec![];
+        let mut data = vec![];
 
-        assert!(PopplerDocument::new_from_data(&data[..], "upw").is_err());
+        assert!(PopplerDocument::new_from_data(&mut data[..], "upw").is_err());
     }
 }
