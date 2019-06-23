@@ -4,13 +4,13 @@ version = "0.1.0"
 authors = ["Marc Brinkmann <git@marcbrinkmann.de>",
           "Denys Vitali <denys@denv.it>",
           "Thiago Machado <swfsql@gmail.com>"]
-build = "build.rs"
-links = "poppler"
 repository = "https://github.com/DMSrs/poppler-rs"
 license = "GPL-2.0"
 description = "Native bindings to the libpoppler library"
 keywords = ["poppler"]
 categories = ["external-ffi-bindings"]
+build = "build.rs"
+links = "poppler-glib"
 
 [dependencies]
 cairo-rs = { version= "0.6.0", features = ["png", "pdf"]}

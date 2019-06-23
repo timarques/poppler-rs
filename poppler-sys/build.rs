@@ -34,7 +34,7 @@ enum Modules {
 // - https://kornel.ski/rust-sys-crate
 // - https://rust-lang.github.io/rust-bindgen/introduction.html
 
-#[cfg(feature = "generate_bindings")]
+#[cfg(feature = "generate-bindings")]
 fn main() {
     // this println ensures a lazy_static execution
     // that will setup the linking
@@ -52,7 +52,7 @@ fn main() {
     gen(builder(), Modules::PopplerMovie);
 }
 
-#[cfg(not(feature = "generate_bindings"))]
+#[cfg(not(feature = "generate-bindings"))]
 fn main() {
     // this println ensures a lazy_static execution
     // that will setup the linking
@@ -70,25 +70,27 @@ fn main() {
     copy_from_vendored(Modules::PopplerMovie);
 }
 
+#[cfg(not(feature = "generate-bindings"))]
 fn copy_from_vendored(module: Modules) {
     let file_name = format!("bindings_{}.rs", module);
 
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = env::var("OUT_DIR").expect("Missing OUT_DIR env var");
     let out_path = PathBuf::from(&out_dir).join(&file_name);
 
     let vend_dir = BINDINGS_VENDOR_DIR;
     let vend_path = PathBuf::from(&vend_dir).join(file_name);
 
-    std::fs::copy(vend_path, out_path).unwrap();
+    std::fs::copy(&vend_path, &out_path).expect(&format!("Failed to copy from {:?} into {:?}. Perhaps you deleted the poppler-sys/build/vendored_bindings/ files and thus need to regenerate them? You might want to try re-building with --features=\"generate-bindings\" ", vend_path, out_path));
 }
 
+#[cfg(feature = "generate-bindings")]
 /// Initialize the builder with some include paths
 fn builder() -> bindgen::Builder {
     let mut builder = bindgen::Builder::default();
 
     // have header depedencies be included into clang
     for incl in POPPLER_LIBRARY.include_paths.iter() {
-        builder = builder.clang_args(&["-I", incl.to_str().unwrap()]);
+        builder = builder.clang_args(&["-I", incl.to_str().expect(&format!("failed to stringfy {:?}", incl))]);
     }
 
     // have wrapping headers be included into clang
@@ -107,6 +109,7 @@ fn builder() -> bindgen::Builder {
         .disable_name_namespacing()
 }
 
+#[cfg(feature = "generate-bindings")]
 /// Prevent re-defition of some types, generates and writes.
 fn gen(mut builder: bindgen::Builder, module: Modules) {
     // enable/disable (re)definition of some types/functions
@@ -143,7 +146,7 @@ fn gen(mut builder: bindgen::Builder, module: Modules) {
     let file_name = format!("bindings_{}.rs", module);
 
     // writing of the bindings into OUT_DIR
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = env::var("OUT_DIR").expect("Missing OUT_DIR env var");
     let out_path = PathBuf::from(&out_dir).join(&file_name);
     binding
         .write_to_file(out_path)
