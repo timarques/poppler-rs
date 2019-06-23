@@ -20,7 +20,7 @@ $ cargo doc --no-deps --open --package poppler-sys
 
 ## Features
 
-- `generate-binding`
+- `generate-bindings`
     If unset (default), the bindings from `build/vendored_bindings` will be copied to `OUTPUT_DIR` and be used as actual bindings.  
     If set, new bindings will be generated into `OUTPUT_DIR` and they will be used as actual bindings. Also, they will be copied into `build/vendored_bindings` (replacing the vendored bindings).
 - `glib-api` (implicit, TODO)
