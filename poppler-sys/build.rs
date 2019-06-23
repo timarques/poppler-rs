@@ -12,6 +12,9 @@ use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 
+const POPPLER_GLIB_VERSION: &'static str = "0.76.0";
+const BINDINGS_VENDOR_DIR: &'static str = "build/vendored_bindings";
+
 #[derive(Hash, Eq, PartialEq, Clone, Display)]
 #[strum(serialize_all = "snake_case")]
 enum Modules {
@@ -31,16 +34,11 @@ enum Modules {
 // - https://kornel.ski/rust-sys-crate
 // - https://rust-lang.github.io/rust-bindgen/introduction.html
 
+#[cfg(feature = "generate_bindings")]
 fn main() {
-    // have poppler-glib be linked into rustc
-    pkg_config::Config::new()
-        .cargo_metadata(false)
-        .atleast_version("0.76.0")
-        .probe("poppler-glib")
-        .expect("pkg-config could not find poppler")
-        .libs
-        .iter()
-        .for_each(|lib| println!("cargo:rustc-link-lib={}", lib));
+    // this println ensures a lazy_static execution
+    // that will setup the linking
+    println!("{:?}", POPPLER_LIBRARY.libs);
 
     gen(builder(), Modules::Poppler);
     gen(builder(), Modules::PopplerDocument);
@@ -54,22 +52,42 @@ fn main() {
     gen(builder(), Modules::PopplerMovie);
 }
 
+#[cfg(not(feature = "generate_bindings"))]
+fn main() {
+    // this println ensures a lazy_static execution
+    // that will setup the linking
+    println!("{:?}", POPPLER_LIBRARY.libs);
+
+    copy_from_vendored(Modules::Poppler);
+    copy_from_vendored(Modules::PopplerDocument);
+    copy_from_vendored(Modules::PopplerPage);
+    copy_from_vendored(Modules::PopplerAction);
+    copy_from_vendored(Modules::PopplerAnnot);
+    copy_from_vendored(Modules::PopplerAttachment);
+    copy_from_vendored(Modules::PopplerFormField);
+    copy_from_vendored(Modules::PopplerLayer);
+    copy_from_vendored(Modules::PopplerMedia);
+    copy_from_vendored(Modules::PopplerMovie);
+}
+
+fn copy_from_vendored(module: Modules) {
+    let file_name = format!("bindings_{}.rs", module);
+
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_path = PathBuf::from(&out_dir).join(&file_name);
+
+    let vend_dir = BINDINGS_VENDOR_DIR;
+    let vend_path = PathBuf::from(&vend_dir).join(file_name);
+
+    std::fs::copy(vend_path, out_path).unwrap();
+}
+
 /// Initialize the builder with some include paths
 fn builder() -> bindgen::Builder {
     let mut builder = bindgen::Builder::default();
 
-    // have glib2 and cairo be included into clang
-    let glib2 = pkg_config::Config::new()
-        .cargo_metadata(false)
-        .atleast_version("2.60.0")
-        .probe("glib-2.0")
-        .expect("pkg-config could not find glib-2.0");
-    let cairo = pkg_config::Config::new()
-        .cargo_metadata(false)
-        .atleast_version("1.16.0")
-        .probe("cairo")
-        .expect("pkg-config could not find cairo");
-    for incl in glib2.include_paths.iter().chain(&cairo.include_paths) {
+    // have header depedencies be included into clang
+    for incl in POPPLER_LIBRARY.include_paths.iter() {
         builder = builder.clang_args(&["-I", incl.to_str().unwrap()]);
     }
 
@@ -77,8 +95,8 @@ fn builder() -> bindgen::Builder {
     // (the wrapping headers use files from poppler as a library,
     // already linked into rustc)
     builder
-        .clang_arg("-I")
-        .clang_arg("build")
+        // includes the wrapper headers
+        .clang_args(&["-I", "build"])
         // extra options
         .whitelist_recursively(false)
         // TODO: also add more types and functions? (cairo, etc)
@@ -117,19 +135,37 @@ fn gen(mut builder: bindgen::Builder, module: Modules) {
 
     // final builder configuration and generation
     let binding = builder
-        .header(format!("build/{}_wrp.h", module))
+        .header(format!("build/header_wrappers/{}_wrp.h", module))
         .generate()
         .expect(&format!("Unable to generate bindings for {}", module));
+    
 
-    // writing of the bindings
+    let file_name = format!("bindings_{}.rs", module);
+
+    // writing of the bindings into OUT_DIR
     let out_dir = env::var("OUT_DIR").unwrap();
-    let out_path = PathBuf::from(&out_dir);
+    let out_path = PathBuf::from(&out_dir).join(&file_name);
     binding
-        .write_to_file(out_path.join(&format!("bindings_{}.rs", module)))
+        .write_to_file(out_path)
+        .expect(&format!("Couldn't write bindings for {}.", module));
+    
+    // also writes it into the binding vendoring directory
+    let vend_dir = BINDINGS_VENDOR_DIR;
+    let vend_path = PathBuf::from(&vend_dir).join(file_name);
+
+    binding
+        .write_to_file(vend_path)
         .expect(&format!("Couldn't write bindings for {}.", module));
 }
 
 lazy_static! {
+    static ref POPPLER_LIBRARY: pkg_config::Library = pkg_config::Config::new()
+        // emits link bindings to poppler-glib
+        .cargo_metadata(true)
+        .atleast_version(POPPLER_GLIB_VERSION)
+        .probe("poppler-glib")
+        .expect("pkg-config could not find poppler");
+       
     static ref WHITELIST_TYPES: HashMap<Modules, Vec<&'static str>> = {
         let mut m = HashMap::new();
         m.insert(
