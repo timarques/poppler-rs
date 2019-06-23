@@ -1,6 +1,6 @@
 use poppler_sys::{poppler as sys, poppler_page as sys_pg};
 use std::ffi::CStr;
-use std::os::raw::{c_double, c_void};
+use std::os::raw::c_double;
 
 #[derive(Debug)]
 pub struct PopplerPage(*mut sys::PopplerPage);
