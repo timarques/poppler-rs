@@ -10,4 +10,3 @@ mod util;
 
 pub use document::PopplerDocument;
 pub use page::PopplerPage;
-pub use page::PopplerPageRef;

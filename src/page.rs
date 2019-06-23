@@ -42,8 +42,3 @@ impl PopplerPage {
         }
     }
 }
-
-#[derive(Debug)]
-pub struct PopplerPageRef {
-    ptr: *mut c_void,
-}
