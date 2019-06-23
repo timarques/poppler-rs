@@ -1,8 +1,6 @@
 use std::ffi::CStr;
 use std::ffi::CString;
-use std::os::raw::c_double;
-use std::os::raw::c_void;
-use std::os::raw::{c_char, c_int};
+use std::os::raw::{c_char, c_int, c_double};
 use std::path;
 
 extern crate cairo;
@@ -149,11 +147,6 @@ impl PopplerPage {
     }
 }
 
-#[derive(Debug)]
-pub struct PoppperPageRef {
-    ptr: *mut c_void,
-}
-
 #[cfg(test)]
 mod tests {
     use cairo::Format;
@@ -162,8 +155,8 @@ mod tests {
     use cairo::ImageSurface;
     use cairo::pdf;
     use std::{fs::File, io::Read};
-    use PopplerDocument;
-    use PopplerPage;
+    use crate::PopplerDocument;
+    use crate::PopplerPage;
 
     #[test]
     fn test1() {
