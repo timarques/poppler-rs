@@ -35,8 +35,8 @@ For now, only glib api is available; and `pkgconfig` emits the linking instructi
 ## Bindings Generation
 
 Assuming the `generate-binding` is set, the bindings will be automatically generated according to the library `poppler-glib` (as searched by `pkgconfig`).  
-The bindings are separated in various modules, so `bindgen` will be called multiple times - so there are a lot of discarded redudancy and so this process takes ~5 minutes on my machine.  
-Bindgen also invokes `clang` and the `build.rs` script includes, into `clang`,  depedencies like `cairo` and `glib` that should result from the `pkgconfig` search.
+The bindings are separated in various modules, so `bindgen` will be called multiple times - so there are a lot of discarded redudancy and so this process is slow (it takes ~5 minutes on my machine).  
+Bindgen invokes `clang`; the `build.rs` script includes, into `clang`,  depedencies like `cairo` and `glib` that should result from the `pkgconfig` search.
 
 Links to:
 - `poppler-glib` (by `pkgconfig`, defaults to dynamic)
