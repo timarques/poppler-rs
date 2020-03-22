@@ -150,10 +150,9 @@ impl PopplerPage {
 #[cfg(test)]
 mod tests {
     use cairo::Format;
-    use cairo::prelude::SurfaceExt;
     use cairo::Context;
     use cairo::ImageSurface;
-    use cairo::pdf;
+    use cairo::PdfSurface;
     use std::{fs::File, io::Read};
     use crate::PopplerDocument;
     use crate::PopplerPage;
@@ -166,7 +165,7 @@ mod tests {
 
         println!("Document has {} page(s)", num_pages);
 
-        let mut surface = pdf::File::new(420.0, 595.0, "output.pdf");
+        let mut surface = PdfSurface::new(420.0, 595.0, "output.pdf").unwrap();
         let ctx = Context::new(&mut surface);
 
         // FIXME: move iterator to poppler
@@ -174,7 +173,7 @@ mod tests {
             let page = doc.get_page(page_num).unwrap();
             let (w, h) = page.get_size();
             println!("page {} has size {}, {}", page_num, w, h);
-            surface.set_size(w, h);
+            surface.set_size(w, h).unwrap();
 
             ctx.save();
             page.render(&ctx);
