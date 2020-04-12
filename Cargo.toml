@@ -1,6 +1,8 @@
 [package]
-authors = ["Marc Brinkmann <git@marcbrinkmann.de>",
-          "Denys Vitali <denys@denv.it>"]
+authors = [
+    "Marc Brinkmann <git@marcbrinkmann.de>",
+    "Denys Vitali <denys@denv.it>"
+]
 name = "poppler"
 license = "GPL-2.0"
 version = "0.3.1"
@@ -10,7 +12,7 @@ edition = "2018"
 
 [dependencies]
 poppler-sys = { version = "0.1.0", path = "poppler-sys" }
-cairo-rs = { version = "0.8.1", features = ["png", "pdf"]}
+cairo-rs = { version = "0.8.1", features = ["png", "pdf"] }
 glib = "0.9.3"
 glib-sys = "0.9.1"
 gobject-sys = "0.9.1"

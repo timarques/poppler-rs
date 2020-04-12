@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 
-const POPPLER_GLIB_VERSION: &'static str = "0.76.0";
+const POPPLER_GLIB_VERSION: &'static str = "0.9.3";
 const BINDINGS_VENDOR_DIR: &'static str = "build/vendored_bindings";
 
 #[derive(Hash, Eq, PartialEq, Clone, Display)]

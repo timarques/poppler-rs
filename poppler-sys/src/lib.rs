@@ -17,10 +17,11 @@ extern crate gtypes;
 mod dep_types {
     pub use cairo_sys::{cairo_region_t, cairo_surface_t, cairo_t};
     pub use glib_sys::{
-        gboolean, gpointer, GArray, GDate, GError, GList, GQuark, GString, GTime, GType,
+        gboolean, gpointer, GArray, GDate, GError, GList, GQuark, GString, GTime, GType, GTree
     };
     pub use gobject_sys::{GObject, GObjectClass};
-    pub use gtypes::{gchar, gdouble, gint, gsize, guint};
+    pub use gtypes::{gchar, gdouble, gint, gsize, guint, gushort};
+    pub type guint64 = u64;
     pub use std::os::raw::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort};
     pub type time_t = c_long;
     pub use gio_sys::{GCancellable, GFile, GInputStream};

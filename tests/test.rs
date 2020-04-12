@@ -3,7 +3,7 @@ extern crate glib;
 extern crate glib_sys;
 extern crate poppler;
 
-use cairo::{pdf, prelude::SurfaceExt, Context, Format, ImageSurface};
+use cairo::{Context, Format, ImageSurface, PdfSurface};
 use poppler::{PopplerDocument, PopplerPage};
 use std::{fs::File, io::Read};
 
@@ -15,7 +15,7 @@ fn test1() {
 
     println!("Document has {} page(s)", num_pages);
 
-    let mut surface = pdf::File::new(420.0, 595.0, "tests/output.pdf");
+    let mut surface = PdfSurface::new(420.0, 595.0, "tests/output.pdf").unwrap();
     let ctx = Context::new(&mut surface);
 
     // FIXME: move iterator to poppler
