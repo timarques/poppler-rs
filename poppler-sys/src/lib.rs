@@ -17,7 +17,7 @@ extern crate gtypes;
 mod dep_types {
     pub use cairo_sys::{cairo_region_t, cairo_surface_t, cairo_t};
     pub use glib_sys::{
-        gboolean, gpointer, GArray, GDate, GError, GList, GQuark, GString, GTime, GType, GTree
+        gboolean, gpointer, GArray, GDate, GError, GList, GQuark, GString, GTime, GType, GTree, GBytes
     };
     pub use gobject_sys::{GObject, GObjectClass};
     pub use gtypes::{gchar, gdouble, gint, gsize, guint, gushort};

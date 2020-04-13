@@ -2,6 +2,7 @@
 
 pub type gint64 = ::std::os::raw::c_long;
 pub type goffset = gint64;
+pub type PopplerPageRange = _PopplerPageRange;
 pub const PopplerPageLayout_POPPLER_PAGE_LAYOUT_UNSET: PopplerPageLayout = 0;
 pub const PopplerPageLayout_POPPLER_PAGE_LAYOUT_SINGLE_PAGE: PopplerPageLayout = 1;
 pub const PopplerPageLayout_POPPLER_PAGE_LAYOUT_ONE_COLUMN: PopplerPageLayout = 2;
@@ -50,6 +51,11 @@ pub type PopplerViewerPreferences = u32;
 pub const PopplerPrintScaling_POPPLER_PRINT_SCALING_APP_DEFAULT: PopplerPrintScaling = 0;
 pub const PopplerPrintScaling_POPPLER_PRINT_SCALING_NONE: PopplerPrintScaling = 1;
 pub type PopplerPrintScaling = u32;
+pub const PopplerPrintDuplex_POPPLER_PRINT_DUPLEX_NONE: PopplerPrintDuplex = 0;
+pub const PopplerPrintDuplex_POPPLER_PRINT_DUPLEX_SIMPLEX: PopplerPrintDuplex = 1;
+pub const PopplerPrintDuplex_POPPLER_PRINT_DUPLEX_DUPLEX_FLIP_SHORT_EDGE: PopplerPrintDuplex = 2;
+pub const PopplerPrintDuplex_POPPLER_PRINT_DUPLEX_DUPLEX_FLIP_LONG_EDGE: PopplerPrintDuplex = 3;
+pub type PopplerPrintDuplex = u32;
 pub const PopplerPermissions_POPPLER_PERMISSIONS_OK_TO_PRINT: PopplerPermissions = 1;
 pub const PopplerPermissions_POPPLER_PERMISSIONS_OK_TO_MODIFY: PopplerPermissions = 2;
 pub const PopplerPermissions_POPPLER_PERMISSIONS_OK_TO_COPY: PopplerPermissions = 4;
@@ -104,6 +110,13 @@ extern "C" {
     pub fn poppler_document_new_from_data(
         data: *mut ::std::os::raw::c_char,
         length: ::std::os::raw::c_int,
+        password: *const ::std::os::raw::c_char,
+        error: *mut *mut GError,
+    ) -> *mut PopplerDocument;
+}
+extern "C" {
+    pub fn poppler_document_new_from_bytes(
+        bytes: *mut GBytes,
         password: *const ::std::os::raw::c_char,
         error: *mut *mut GError,
     ) -> *mut PopplerDocument;
@@ -260,6 +273,18 @@ extern "C" {
     ) -> PopplerPrintScaling;
 }
 extern "C" {
+    pub fn poppler_document_get_print_duplex(document: *mut PopplerDocument) -> PopplerPrintDuplex;
+}
+extern "C" {
+    pub fn poppler_document_get_print_n_copies(document: *mut PopplerDocument) -> gint;
+}
+extern "C" {
+    pub fn poppler_document_get_print_page_ranges(
+        document: *mut PopplerDocument,
+        n_ranges: *mut ::std::os::raw::c_int,
+    ) -> *mut PopplerPageRange;
+}
+extern "C" {
     pub fn poppler_document_get_n_attachments(document: *mut PopplerDocument) -> guint;
 }
 extern "C" {
@@ -273,6 +298,9 @@ extern "C" {
         document: *mut PopplerDocument,
         link_name: *const gchar,
     ) -> *mut PopplerDest;
+}
+extern "C" {
+    pub fn poppler_document_create_dests_tree(document: *mut PopplerDocument) -> *mut GTree;
 }
 extern "C" {
     pub fn poppler_document_get_form_field(
@@ -409,4 +437,42 @@ extern "C" {
 }
 extern "C" {
     pub fn poppler_ps_file_free(ps_file: *mut PopplerPSFile);
+}
+#[repr(C)]
+pub struct _PopplerPageRange {
+    pub start_page: gint,
+    pub end_page: gint,
+}
+#[test]
+fn bindgen_test_layout__PopplerPageRange() {
+    assert_eq!(
+        ::std::mem::size_of::<_PopplerPageRange>(),
+        8usize,
+        concat!("Size of: ", stringify!(_PopplerPageRange))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<_PopplerPageRange>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_PopplerPageRange))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<_PopplerPageRange>())).start_page as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_PopplerPageRange),
+            "::",
+            stringify!(start_page)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<_PopplerPageRange>())).end_page as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_PopplerPageRange),
+            "::",
+            stringify!(end_page)
+        )
+    );
 }

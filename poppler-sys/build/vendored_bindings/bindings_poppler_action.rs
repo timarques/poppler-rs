@@ -2,21 +2,20 @@
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct __BindgenBitfieldUnit<Storage, Align>
-where
-    Storage: AsRef<[u8]> + AsMut<[u8]>,
-{
+pub struct __BindgenBitfieldUnit<Storage, Align> {
     storage: Storage,
     align: [Align; 0],
+}
+impl<Storage, Align> __BindgenBitfieldUnit<Storage, Align> {
+    #[inline]
+    pub const fn new(storage: Storage) -> Self {
+        Self { storage, align: [] }
+    }
 }
 impl<Storage, Align> __BindgenBitfieldUnit<Storage, Align>
 where
     Storage: AsRef<[u8]> + AsMut<[u8]>,
 {
-    #[inline]
-    pub fn new(storage: Storage) -> Self {
-        Self { storage, align: [] }
-    }
     #[inline]
     pub fn get_bit(&self, index: usize) -> bool {
         debug_assert!(index / 8 < self.storage.as_ref().len());
@@ -86,7 +85,7 @@ where
 pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
 impl<T> __BindgenUnionField<T> {
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         __BindgenUnionField(::std::marker::PhantomData)
     }
     #[inline]
@@ -126,6 +125,12 @@ impl<T> ::std::cmp::PartialEq for __BindgenUnionField<T> {
 }
 impl<T> ::std::cmp::Eq for __BindgenUnionField<T> {}
 pub type guint8 = ::std::os::raw::c_uchar;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _PopplerPageRange {
+    _unused: [u8; 0],
+}
+pub type PopplerPageRange = _PopplerPageRange;
 pub const PopplerActionType_POPPLER_ACTION_UNKNOWN: PopplerActionType = 0;
 pub const PopplerActionType_POPPLER_ACTION_NONE: PopplerActionType = 1;
 pub const PopplerActionType_POPPLER_ACTION_GOTO_DEST: PopplerActionType = 2;

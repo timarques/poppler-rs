@@ -208,6 +208,12 @@ pub struct _PopplerTextSpan {
     _unused: [u8; 0],
 }
 pub type PopplerTextSpan = _PopplerTextSpan;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _PopplerPageRange {
+    _unused: [u8; 0],
+}
+pub type PopplerPageRange = _PopplerPageRange;
 pub const PopplerBackend_POPPLER_BACKEND_UNKNOWN: PopplerBackend = 0;
 pub const PopplerBackend_POPPLER_BACKEND_SPLASH: PopplerBackend = 1;
 pub const PopplerBackend_POPPLER_BACKEND_CAIRO: PopplerBackend = 2;
